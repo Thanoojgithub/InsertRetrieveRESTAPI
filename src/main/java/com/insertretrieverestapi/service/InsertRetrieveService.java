@@ -1,7 +1,6 @@
 package com.insertretrieverestapi.service;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,6 +29,6 @@ public interface InsertRetrieveService {
 	@Description(value = "Resource", target = DocTarget.RESOURCE)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
-	public List<Entry<String, Element>> retrieve();
+	public List<Element> retrieve();
 
 }

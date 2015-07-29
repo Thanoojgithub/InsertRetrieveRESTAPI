@@ -3,8 +3,8 @@ package com.insertretrieverestapi.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +21,12 @@ public class InsertRetrieveServiceImpl implements InsertRetrieveService {
 	 * insert
 	 */
 	public void insert(String str) {
-		if(null == getElement().get(str)){
-			getElement().put(str, new Element(1, str, Calendar.getInstance().getTimeInMillis()));
-		}else{
+		if (null == getElement().get(str)) {
+			getElement().put(
+					str,
+					new Element(1, str, Calendar.getInstance()
+							.getTimeInMillis()));
+		} else {
 			Element ele = getElement().get(str);
 			ele.setCount(ele.getCount() + 1);
 			ele.setTimeStamp(Calendar.getInstance().getTimeInMillis());
@@ -34,21 +37,26 @@ public class InsertRetrieveServiceImpl implements InsertRetrieveService {
 	/**
 	 * retrieve
 	 */
-	public List<Map.Entry<String, Element>> retrieve() {
-		List<Map.Entry<String, Element>> list = new ArrayList<Map.Entry<String, Element>>(getElement().entrySet());
-		Collections.sort(list ,
-				new Comparator<Map.Entry<String, Element>>() {
-					public int compare(Map.Entry<String, Element> o1,
-							Map.Entry<String, Element> o2) {
-						int i = 0;
-						if(o1.getValue().getCount() - o2.getValue().getCount() == 0){
-							i = o1.getValue().getWord().compareTo(o2.getValue().getWord());
-						}else{
-							i = o1.getValue().getCount() - o2.getValue().getCount();
-						}
-						return i;
-					}
-				});
+	public List<Element> retrieve() {
+		List<Element> list = new ArrayList<Element>();
+		Iterator<String> iterator = getElement().keySet().iterator();
+		while (iterator.hasNext()) {
+			Element ele = getElement().get(iterator.next());
+			/**
+			 * test case - 0.30 minutes
+			 */
+			if (System.currentTimeMillis() - ele.getTimeStamp() > 18000) {
+				if (ele.getCount() > 1) {
+					ele.setCount(ele.getCount() - 1);
+					list.add(ele);
+				} else {
+					iterator.remove();
+				}
+			} else {
+				list.add(ele);
+			}
+		}
+		Collections.sort(list);
 		return list;
 	}
 
@@ -57,8 +65,5 @@ public class InsertRetrieveServiceImpl implements InsertRetrieveService {
 			element = new HashMap<String, Element>();
 		return element;
 	}
-
-	
-	
 
 }
